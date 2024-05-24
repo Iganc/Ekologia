@@ -26,22 +26,11 @@ class Antelope(Animal):
     def move(self):
         result = []
         pomPositions = self.getNeighboringPosition()
+        safePositions = [pos for pos in pomPositions if not isinstance(self.world.getOrganismFromPosition(pos), Lynx)]
         newPosition = None
 
-        if pomPositions:
-            for pos in pomPositions:
-                organism = self.world.getOrganismFromPosition(pos)
-                if isinstance(organism, Lynx):
-                    # Run away from Lynx
-                    x_diff = self.position.x - organism.position.x
-                    y_diff = self.position.y - organism.position.y
-                    new_x = self.position.x + (2 * x_diff)
-                    new_y = self.position.y + (2 * y_diff)
-                    newPosition = Position(new_x, new_y)
-                    break
-            else:
-                # Normal move
-                newPosition = random.choice(pomPositions)
+        if safePositions:
+            newPosition = random.choice(safePositions)
 
             if newPosition and self.world.positionOnBoard(newPosition):
                 result.append(Action(ActionEnum.A_MOVE, newPosition, 0, self))
